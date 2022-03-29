@@ -1,0 +1,30 @@
+version: '3.7'
+
+services:
+  app:
+    build: ./rest-api 
+    ports:
+      - 8080:8080
+    depends_on:
+      - mysql
+    environment:
+       MYSQL_HOST: filmdb 
+       MYSQL_USER: root
+       MYSQL_PASSWORD: secret
+       MYSQL_DB: movies 
+
+  mysql:
+    container_name: filmdb
+    image: mysql:5.7
+    volumes:
+      - film-db-mysql-data:/var/lib/mysql
+      - ./rest-api/database/init/init.sql:/database/init.sql
+    ports:
+      - 3306:3306
+    command: --init-file /database/init.sql
+    environment:
+       MYSQL_ROOT_PASSWORD: secret
+       MYSQL_DATABASE: movies 
+
+volumes:
+  film-db-mysql-data:
